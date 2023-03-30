@@ -37,8 +37,7 @@ impl MinHeap {
         self.length = self.length - 1;
 
         let last_val = self.data.pop().expect("a value");
-        let first_val = self.data.first_mut().expect("a value");
-        *first_val = last_val;
+        *self.data.first_mut().expect("a value") = last_val;
         self.heapify_down(0);
 
         Some(out)
@@ -53,10 +52,8 @@ impl MinHeap {
             let parent_val = self.data.get(parent_idx).expect("a value").to_owned();
 
             if current_val < parent_val {
-                let p = self.data.get_mut(parent_idx).expect("a value");
-                *p = current_val;
-                let c = self.data.get_mut(current_idx).expect("a value");
-                *c = parent_val;
+                *self.data.get_mut(parent_idx).expect("a value") = current_val;
+                *self.data.get_mut(current_idx).expect("a value") = parent_val;
                 current_idx = parent_idx;
             } else {
                 return;
@@ -82,16 +79,12 @@ impl MinHeap {
             match right_val {
                 Some(&right_val) => {
                     if left_val < right_val && left_val < current_val {
-                        let l = self.data.get_mut(left_idx).expect("a value");
-                        *l = current_val;
-                        let c = self.data.get_mut(current_idx).expect("a value");
-                        *c = left_val;
+                        *self.data.get_mut(left_idx).expect("a value") = current_val;
+                        *self.data.get_mut(current_idx).expect("a value") = left_val;
                         current_idx = left_idx;
                     } else if right_val < current_val {
-                        let r = self.data.get_mut(right_val).expect("a value");
-                        *r = current_val;
-                        let c = self.data.get_mut(current_idx).expect("a value");
-                        *c = right_val;
+                        *self.data.get_mut(right_idx).expect("a value") = current_val;
+                        *self.data.get_mut(current_idx).expect("a value") = right_val;
                         current_idx = right_idx;
                     } else {
                         return;
@@ -99,10 +92,8 @@ impl MinHeap {
                 }
                 None => {
                     if left_val < current_val {
-                        let l = self.data.get_mut(left_idx).expect("a value");
-                        *l = current_val;
-                        let c = self.data.get_mut(current_idx).expect("a value");
-                        *c = left_val;
+                        *self.data.get_mut(left_idx).expect("a value") = current_val;
+                        *self.data.get_mut(current_idx).expect("a value") = left_val;
                         current_idx = left_idx;
                     } else {
                         return;
