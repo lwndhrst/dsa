@@ -1,9 +1,9 @@
-pub struct MinHeap {
+pub struct MaxHeap {
     length: usize,
     data: Vec<usize>,
 }
 
-impl MinHeap {
+impl MaxHeap {
     pub fn new() -> Self {
         return Self {
             length: 0,
@@ -47,7 +47,7 @@ impl MinHeap {
             let parent_idx = self.parent(current_idx);
             let parent_val = self.data.get(parent_idx).expect("a value").to_owned();
 
-            if current_val < parent_val {
+            if current_val > parent_val {
                 *self.data.get_mut(parent_idx).expect("a value") = current_val;
                 *self.data.get_mut(current_idx).expect("a value") = parent_val;
                 current_idx = parent_idx;
@@ -73,11 +73,11 @@ impl MinHeap {
 
             match right_val {
                 Some(&right_val) => {
-                    if left_val < right_val && left_val < current_val {
+                    if left_val > right_val && left_val > current_val {
                         *self.data.get_mut(left_idx).expect("a value") = current_val;
                         *self.data.get_mut(current_idx).expect("a value") = left_val;
                         current_idx = left_idx;
-                    } else if right_val < current_val {
+                    } else if right_val > current_val {
                         *self.data.get_mut(right_idx).expect("a value") = current_val;
                         *self.data.get_mut(current_idx).expect("a value") = right_val;
                         current_idx = right_idx;
@@ -86,7 +86,7 @@ impl MinHeap {
                     }
                 }
                 None => {
-                    if left_val < current_val {
+                    if left_val > current_val {
                         *self.data.get_mut(left_idx).expect("a value") = current_val;
                         *self.data.get_mut(current_idx).expect("a value") = left_val;
                         current_idx = left_idx;
@@ -116,48 +116,48 @@ mod test {
     use super::*;
 
     #[test]
-    fn min_heap() {
-        let mut min_heap = MinHeap::new();
+    fn max_heap() {
+        let mut max_heap = MaxHeap::new();
 
-        min_heap.push(10);
-        assert_eq!(min_heap.length, 1);
-        assert_eq!(min_heap.data, vec![10]);
+        max_heap.push(10);
+        assert_eq!(max_heap.length, 1);
+        assert_eq!(max_heap.data, vec![10]);
 
-        min_heap.push(7);
-        assert_eq!(min_heap.length, 2);
-        assert_eq!(min_heap.data, vec![7, 10]);
+        max_heap.push(7);
+        assert_eq!(max_heap.length, 2);
+        assert_eq!(max_heap.data, vec![10, 7]);
         
-        min_heap.push(13);
-        assert_eq!(min_heap.length, 3);
-        assert_eq!(min_heap.data, vec![7, 10, 13]);
+        max_heap.push(13);
+        assert_eq!(max_heap.length, 3);
+        assert_eq!(max_heap.data, vec![13, 7, 10]);
 
-        min_heap.push(3);
-        assert_eq!(min_heap.length, 4);
-        assert_eq!(min_heap.data, vec![3, 7, 13, 10]);
+        max_heap.push(3);
+        assert_eq!(max_heap.length, 4);
+        assert_eq!(max_heap.data, vec![13, 7, 10, 3]);
 
-        let val = min_heap.pop();
-        assert_eq!(val, Some(3));
-        assert_eq!(min_heap.length, 3);
-        assert_eq!(min_heap.data, vec![7, 10, 13]);
-
-        let val = min_heap.pop();
-        assert_eq!(val, Some(7));
-        assert_eq!(min_heap.length, 2);
-        assert_eq!(min_heap.data, vec![10, 13]);
-
-        let val = min_heap.pop();
-        assert_eq!(val, Some(10));
-        assert_eq!(min_heap.length, 1);
-        assert_eq!(min_heap.data, vec![13]);
-
-        let val = min_heap.pop();
+        let val = max_heap.pop();
         assert_eq!(val, Some(13));
-        assert_eq!(min_heap.length, 0);
-        assert_eq!(min_heap.data, vec![]);
+        assert_eq!(max_heap.length, 3);
+        assert_eq!(max_heap.data, vec![10, 7, 3]);
 
-        let val = min_heap.pop();
+        let val = max_heap.pop();
+        assert_eq!(val, Some(10));
+        assert_eq!(max_heap.length, 2);
+        assert_eq!(max_heap.data, vec![7, 3]);
+
+        let val = max_heap.pop();
+        assert_eq!(val, Some(7));
+        assert_eq!(max_heap.length, 1);
+        assert_eq!(max_heap.data, vec![3]);
+
+        let val = max_heap.pop();
+        assert_eq!(val, Some(3));
+        assert_eq!(max_heap.length, 0);
+        assert_eq!(max_heap.data, vec![]);
+
+        let val = max_heap.pop();
         assert_eq!(val, None);
-        assert_eq!(min_heap.length, 0);
-        assert_eq!(min_heap.data, vec![]);
+        assert_eq!(max_heap.length, 0);
+        assert_eq!(max_heap.data, vec![]);
     }
 }
