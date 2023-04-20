@@ -1,5 +1,8 @@
 # data structures and algorithms practice
 
-implemented so far:
-- minimum heap
-- maximum heap
+## implemented so far
+
+### rust
+- min/max heap
+
+### zig
