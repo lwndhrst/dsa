@@ -1,8 +1,6 @@
 # data structures and algorithms practice
 
-## implemented so far
-
-### rust
+## rust
 - min/max heap
 
-### zig
+## zig
