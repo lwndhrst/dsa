@@ -104,11 +104,12 @@ right_child :: proc(idx: u64) -> u64 {
 ////////////////////////////////////////////////////////////////////
 
 import "core:testing"
+import "core:math/rand"
 
 expect :: testing.expect
 
 @(test)
-test_min_heap :: proc(t: ^testing.T) {
+test_push_pop :: proc(t: ^testing.T) {
     data := make([dynamic]u64)
     defer delete(data)
 
@@ -206,6 +207,51 @@ test_min_heap :: proc(t: ^testing.T) {
         compare_slices(heap.data[:], expect_slice),
         fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
     )
+}
+
+@(test)
+test_100_000_rand_elems :: proc(t: ^testing.T) {
+    n_elems :: 100_000
+
+    data := make([dynamic]u64, 0, n_elems)
+    defer delete(data)
+
+    heap := MinHeap { 0, &data }
+    
+    rng  := rand.create(0)
+    rand.init_as_system(&rng)
+
+    for i in 0..<n_elems {
+        val := rand.uint64(&rng)
+        push(&heap, val)
+    }
+
+    expect(t, 
+        heap.len == n_elems,
+        fmt.tprintf("Expected: %v, but got %v instead\n", n_elems, heap.len),
+    )
+
+    for val, i in heap.data {
+        idx := cast(u64)i
+
+        left_idx := left_child(idx)
+        if left_idx >= heap.len {
+            continue
+        }
+        expect(t, 
+            val <= heap.data[left_idx],
+            fmt.tprintf("Weak order is borked\n"),
+        )
+
+        right_idx := right_child(idx)
+        if right_idx >= heap.len {
+            continue
+        }
+        expect(t, 
+            val <= heap.data[right_idx],
+            fmt.tprintf("Weak order is borked\n"),
+        )
+    }
 }
 
 compare_slices :: proc(a: []u64, b: []u64) -> bool {
