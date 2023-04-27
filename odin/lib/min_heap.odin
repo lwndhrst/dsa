@@ -59,13 +59,13 @@ heapify_down :: proc(heap: ^MinHeap, idx: u64) {
 	current_val := heap.data[current_idx]
 
 	for current_idx < heap.len - 1 {
-		left_idx  := left_child(current_idx)
-		right_idx := right_child(current_idx)
+		left_idx := left_child(current_idx)
 
 		if left_idx >= heap.len {
 			return
 		}
-
+		
+		right_idx := right_child(current_idx)
 		min_idx: u64
 
 		if right_idx >= heap.len {
@@ -73,7 +73,7 @@ heapify_down :: proc(heap: ^MinHeap, idx: u64) {
 		} else {
 			left_val  := heap.data[left_idx]
 			right_val := heap.data[right_idx]
-			min_idx    = left_val < right_val ? left_idx : right_idx
+			min_idx = left_val < right_val ? left_idx : right_idx
 		}
 
 		min_val := heap.data[min_idx]
@@ -82,8 +82,8 @@ heapify_down :: proc(heap: ^MinHeap, idx: u64) {
 			return
 		}
 
-		heap.data[min_idx]	   = current_val
-		heap.data[current_idx] = min_val
+		heap.data[min_idx]	= current_val
+		heap.data[current_idx] 	= min_val
 	}
 }
 
