@@ -262,7 +262,7 @@ compare_slices :: proc(a: []u64, b: []u64) -> bool {
 	}
 
 	for v, i in a {
-		if a[i] != b[i] {
+		if v != b[i] {
 			return false
 		}
 	}
