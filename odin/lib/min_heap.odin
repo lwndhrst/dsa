@@ -255,7 +255,7 @@ test_100_000_rand_elems :: proc(t: ^testing.T) {
 }
 
 compare_slices :: proc(a: []u64, b: []u64) -> bool {
-	// fmt.printf("Comparing slices:\n	A: %v\n  B: %v\n", a, b)
+	// fmt.printf("Comparing slices:\n  A: %v\n  B: %v\n", a, b)
 
 	if len(a) != len(b) {
 		return false
