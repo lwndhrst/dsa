@@ -28,8 +28,7 @@ pop :: proc(heap: ^MinHeap) -> Maybe(u64) {
 
 	heap.len -= 1
 
-	last_elem := heap.data[heap.len]
-	heap.data[0] = last_elem
+	heap.data[0] = heap.data[heap.len]
 	remove_range(heap.data, cast(int)heap.len, len(heap.data))
 	heapify_down(heap, 0)
 
@@ -44,13 +43,13 @@ heapify_up :: proc(heap: ^MinHeap, idx: u64) {
 		parent_idx := parent(current_idx)
 		parent_val := heap.data[parent_idx]
 
-		if current_val < parent_val {
-			heap.data[parent_idx]  = current_val
-			heap.data[current_idx] = parent_val
-			current_idx = parent_idx
-		} else {
+		if current_val >= parent_val {
 			return
 		}
+
+		heap.data[parent_idx]  = current_val
+		heap.data[current_idx] = parent_val
+		current_idx = parent_idx
 	}
 }
 
@@ -82,8 +81,9 @@ heapify_down :: proc(heap: ^MinHeap, idx: u64) {
 			return
 		}
 
-		heap.data[min_idx]	= current_val
+		heap.data[min_idx]		= current_val
 		heap.data[current_idx] 	= min_val
+		current_idx = min_idx
 	}
 }
 
