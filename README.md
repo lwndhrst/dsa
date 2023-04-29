@@ -1,6 +1,7 @@
 # data structures and algorithms practice
 
 ## c
+- min heap
 
 ## odin
 - min heap
