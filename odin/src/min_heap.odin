@@ -61,12 +61,10 @@ heapify_down :: proc(heap: ^MinHeap, idx: u64) {
 			return
 		}
 		
+		min_idx	  := left_idx
 		right_idx := right_child(current_idx)
-		min_idx: u64
 
-		if right_idx >= heap.len {
-			min_idx = left_idx
-		} else {
+		if right_idx < heap.len {
 			left_val  := heap.data[left_idx]
 			right_val := heap.data[right_idx]
 			min_idx = left_val < right_val ? left_idx : right_idx
@@ -207,7 +205,7 @@ test_push_pop :: proc(t: ^testing.T) {
 }
 
 @(test)
-test_100_000_rand_elems :: proc(t: ^testing.T) {
+test_n_rand_elems :: proc(t: ^testing.T) {
 	n_elems :: 1024
 
 	data := make([dynamic]u64, 0, n_elems)

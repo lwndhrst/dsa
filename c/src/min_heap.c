@@ -49,11 +49,10 @@ int min_heap_heapify_down(MinHeap *heap, size_t idx) {
         if (left_idx >= heap->len)
             return 0;
 
+        size_t min_idx   = left_idx;
         size_t right_idx = min_heap_right_child_idx(current_idx);
-        size_t min_idx;
-        if (right_idx >= heap->len) {
-            min_idx = left_idx;
-        } else {
+
+        if (right_idx < heap->len) {
             int left_val  = heap->data[left_idx];
             int right_val = heap->data[right_idx];
             min_idx = left_val < right_val ? left_idx : right_idx;
