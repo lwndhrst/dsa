@@ -97,8 +97,8 @@ int min_heap_pop(MinHeap *heap) {
     return val;
 }
 
-int _test_weak_order(MinHeap *heap, size_t max_idx) {
-    for (int i = 0; i < max_idx; i += 1) {
+int _test_weak_order(MinHeap *heap) {
+    for (int i = 0; i < heap->len; i += 1) {
         size_t left_idx  = min_heap_left_child_idx(i);
         size_t right_idx = min_heap_right_child_idx(i);
 
@@ -130,7 +130,7 @@ int main(void) {
 
     for (int i = 0; i < MIN_HEAP_SIZE; i += 1) {
         min_heap_push(&heap, rand());
-        _test_weak_order(&heap, i);
+        _test_weak_order(&heap);
     }
 
     if (heap.len != MIN_HEAP_SIZE)
@@ -138,7 +138,7 @@ int main(void) {
 
     for (int i = 0; i < MIN_HEAP_SIZE; i += 1) {
         int val = min_heap_pop(&heap);
-        _test_weak_order(&heap, MIN_HEAP_SIZE - i);
+        _test_weak_order(&heap);
     }
 
     return 0;

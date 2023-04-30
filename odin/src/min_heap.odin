@@ -22,14 +22,11 @@ pop :: proc(heap: ^MinHeap) -> Maybe(u64) {
 
 	if heap.len == 1 {
 		heap.len  = 0
-		clear(heap.data)
 		return val
 	}
 
 	heap.len -= 1
-
 	heap.data[0] = heap.data[heap.len]
-	remove_range(heap.data, cast(int)heap.len, len(heap.data))
 	heapify_down(heap, 0)
 
 	return val
@@ -120,28 +117,28 @@ test_push_pop :: proc(t: ^testing.T) {
 	push(&heap, 10)
 	expect_slice = []u64{10}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
 	push(&heap, 7)
 	expect_slice = []u64{7, 10}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
 	push(&heap, 13)
 	expect_slice = []u64{7, 10, 13}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
 	push(&heap, 3)
 	expect_slice = []u64{3, 7, 13, 10}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
@@ -156,7 +153,7 @@ test_push_pop :: proc(t: ^testing.T) {
 	)
 	expect_slice = []u64{7, 10, 13}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
@@ -168,7 +165,7 @@ test_push_pop :: proc(t: ^testing.T) {
 	)
 	expect_slice = []u64{10, 13}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
@@ -180,7 +177,7 @@ test_push_pop :: proc(t: ^testing.T) {
 	)
 	expect_slice = []u64{13}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
@@ -192,7 +189,7 @@ test_push_pop :: proc(t: ^testing.T) {
 	)
 	expect_slice = []u64{}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 
@@ -204,14 +201,14 @@ test_push_pop :: proc(t: ^testing.T) {
 	)
 	expect_slice = []u64{}
 	expect(t, 
-		compare_slices(heap.data[:], expect_slice),
+		compare_slices(heap.data[:heap.len], expect_slice),
 		fmt.tprintf("Expected: %v, but got %v instead\n", expect_slice, heap.data[:]),
 	)
 }
 
 @(test)
 test_100_000_rand_elems :: proc(t: ^testing.T) {
-	n_elems :: 100_000
+	n_elems :: 1024
 
 	data := make([dynamic]u64, 0, n_elems)
 	defer delete(data)
@@ -224,6 +221,7 @@ test_100_000_rand_elems :: proc(t: ^testing.T) {
 	for i in 0..<n_elems {
 		val := rand.uint64(&rng)
 		push(&heap, val)
+		check_weak_order(&heap, t)
 	}
 
 	expect(t, 
@@ -231,26 +229,33 @@ test_100_000_rand_elems :: proc(t: ^testing.T) {
 		fmt.tprintf("Expected: %v, but got %v instead\n", n_elems, heap.len),
 	)
 
-	for val, i in heap.data {
-		idx := cast(u64)i
+	for i in 0..<n_elems {
+		pop(&heap)
+		check_weak_order(&heap, t)
+	}
 
-		left_idx := left_child(idx)
-		if left_idx >= heap.len {
-			continue
-		}
-		expect(t, 
-			val <= heap.data[left_idx],
-			fmt.tprintf("Weak order is borked\n"),
-		)
+	check_weak_order :: proc(heap: ^MinHeap, t: ^testing.T) {
+		for val, i in heap.data {
+			idx := cast(u64)i
 
-		right_idx := right_child(idx)
-		if right_idx >= heap.len {
-			continue
+			left_idx := left_child(idx)
+			if left_idx >= heap.len {
+				continue
+			}
+			expect(t, 
+				val <= heap.data[left_idx],
+				fmt.tprintf("Weak order is borked (left side)\n"),
+			)
+
+			right_idx := right_child(idx)
+			if right_idx >= heap.len {
+				continue
+			}
+			expect(t, 
+				val <= heap.data[right_idx],
+				fmt.tprintf("Weak order is borked (right side)\n"),
+			)
 		}
-		expect(t, 
-			val <= heap.data[right_idx],
-			fmt.tprintf("Weak order is borked\n"),
-		)
 	}
 }
 
