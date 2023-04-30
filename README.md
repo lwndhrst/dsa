@@ -8,6 +8,5 @@
 
 ## rust
 - [min heap](rust/src/min_heap.rs)
-- [max heap](rust/src/max_heap.rs)
 
 ## zig
