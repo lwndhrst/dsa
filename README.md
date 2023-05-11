@@ -2,6 +2,7 @@
 
 ## c
 - [min heap](c/src/min_heap.c)
+- [quicksort](c/src/quicksort.c)
 
 ## odin
 - [min heap](odin/src/min_heap.odin)
